@@ -270,7 +270,7 @@ plt.barh(range(101), f)
 plt.show()
 ```
 
-![항아리그래프](Day05.assets/항아리그래프.png)
+![potgraph1](Day05.assets/potgraph1.png)
 
 위 그래프는 -100, -200등의 값이 깨져서 나온다. 또한 제목과 레이블이 없어 어떤 게 남성이고 어떤 게 여성인지 구분이 어렵다. 이 시각화한 그래프를 조금 더 다듬고 싶다면 아래와 같이 작성을 해주면 된다.
 
@@ -284,4 +284,247 @@ plt.legend() #레이블(남성, 여성) 표시
 plt.show()
 ```
 
-![항아리그래프1](Day05.assets/항아리그래프1-2601555.png)
+![potgraph2](Day05.assets/potgraph2.png)
+
+이번에는 제주특별자치도의 남녀 연령 인구분포를 알아보도록 하자. input값에 '제주특별자치도' 를 넣었을 때 어떤 일이 일어나는 지 보도록 하자.
+
+``` python
+import csv
+f = open('gender.csv', 'r', encoding = 'cp949')
+data = csv.reader(f)
+m = []
+f = []
+search = input("찾고싶은 지역의 이름을 입력하세요: ")
+
+for row in data:
+    if search in row[0]:
+        for i in range(0, 101):
+            m.append(-int(row[i+3].replace(',',''))) #3번째 열부터 삽입. 앞부터 101개. 그래프 안겹치도록 (-) 처리
+            f.append(int(row[-(i+1)].replace(',',''))) #맨 뒤부터 삽입. 뒤부터 101개, 여자 전체 인구수는 안들어가게 된다.
+        f.reverse #모두 추출 후 reverse를 해야 0~100세이상 값으로 나온다.
+
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'AppleGothic' #한국어 폰트 사용
+plt.rcParams['axes.unicode_minus'] = False #(-)값 깨짐현상 해결
+plt.title('%s 지역의 남녀 성별 인구분포'%search) #그래프 제목
+plt.barh(range(101), m, label = '남성')
+plt.barh(range(101), f, label = '여성')
+plt.legend()
+plt.show()
+```
+
+![valueerror](Day05.assets/valueerror-2668120.png)
+
+위와 같이 ValueError가 발생한다. x축의 값(range(101))의 갯수와 데이터의 갯수가 맞지 않는다는 것을 의미한다. 그 이유를 알기 위해 gender 파일의 데이터에서 '제주특별자치도'가 있는 데이터를 확인해보았다.
+
+![jeju_valueerror 오후 3.31.45](Day05.assets/jeju_valueerror 오후 3.31.45.png)
+
+에러가 난 코드는 '제주특별자치도' 라는 말이 row[0]에 포함된 모든 값들을 계산한다. 따라서, [제주특별자치도, 제주특별자치도 제주시, 제주특별자치도 제주시 한림읍, 제주특별자치도 제주시 애월읍, ...] 등등 모든 값을 계산하게 되는 것이다.
+
+그렇기 때문에 데이터는 101개가 아닌 수도 없이 많은 갯수가 나오게 되고, 이는 찾아내고자 한 데이터 값과 다르게 된다. 이를 해결하는 방법은, 한줄한줄 코드가 확인할 때 '제주특별자치도'란 말이 나오면 첫 번째 값만 저장한 후 **break** 를 걸어주는 법이다.
+
+``` python
+import csv
+f = open('gender.csv', 'r', encoding = 'cp949')
+data = csv.reader(f)
+m = []
+f = []
+search = input("찾고싶은 지역의 이름을 입력하세요: ")
+
+for row in data:
+    if search in row[0]:
+        for i in range(0, 101):
+            m.append(-int(row[i+3].replace(',','')))
+            f.append(int(row[-(i+1)].replace(',','')))
+        break #맨 위의 값 하나만 받은 후 멈춤
+        f.reverse 
+
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'AppleGothic' #한국어 폰트 사용
+plt.rcParams['axes.unicode_minus'] = False #(-)값 깨짐현상 해결
+plt.title('%s 지역의 남녀 성별 인구분포'%search) #그래프 제목
+plt.barh(range(101), m, label = '남성')
+plt.barh(range(101), f, label = '여성')
+plt.legend()
+plt.show()
+```
+
+![jeju_solve](Day05.assets/jeju_solve-2668154.png)
+
+## 3. 파이 차트
+
+이번에는 파이차트를 사용해보도록 하자. 파이차트는 값들의 합계를 100%로 보고, 각 값들이 그중에 얼마의 비율을 차지하는지를 나타내어 준다. 차트의 컬러 지정 및 돌출 정도 설정도 가능하다. 아래의 혈액형 비율 표현에서 코드를 확인해보았다.
+
+- *plt.pie(['값'], 'labels', 'autopct', colors, explode)*
+
+- *plt.axis('equal')* : 파이 차트는 기본적으로 타원형으로 나오므로, 동그란 원형을 만들고 싶다면 이 코드를 넣어줘야 한다.
+
+- *autopct* : 해당 항목이 전체의 몇 퍼센트(%)인지를 알려준다. 
+
+  예시) `autopct = '%0.2f%%'`  소숫점 두번째자리까지 보여주고 맨 뒤에 ‘%’ 기호를 붙이겠다는 의미. **% 기호를 두 번 쓰는 이유는 문자열 포매팅 할 때 처음 % 기호가 이스케이프 문자처럼 작동하기 때문이다.**
+
+- *explode* : 눈에 띄도록 만들고 싶은 비율이 있다면, explode를 사용해 돌출되도록 만든다. 기본값은 0이므로, 돌출했으면 하는 정도에 따라 값을 설정한다.
+
+### 혈액형 비율 표현하기
+
+``` python
+import matplotlib.pyplot as plt
+size = [2441, 2312, 1031, 1233] #전체 합이 원 전체이다.
+label = ['A형', 'B형', 'AB형', 'O형']
+color = ['skyblue', 'deeppink', 'hotpink', 'pink']
+plt.axis('equal') #파이차트를 동그란 원으로 만들어 준다.
+plt.pie(size, labels = label, autopct = '%.1f%%', colors = color, explode = (0.1,0,0,0)) #autopct = 오토퍼센트. 소수점 1의자리까지 나타내주기, 첫번째 값 0.1만큼 돌출
+plt.legend() #레이블 표시
+plt.show() #완성된 표를 보면 3시부터 시작해서 반시계 방향으로 그려지는 것을 확인할 수 있다.
+```
+
+![bloodtype](Day05.assets/bloodtype-2668213.png)
+
+위의 파이 차트를 보면서 알 수 있는 점은 '파이 차트는 오후 3시를 기준으로 반시계 방향으로 회전한다.'는 점이다. 시작 지점을 바꾸고 싶다면 *startangle*을 지정해주면 된다. 추가로, matplotlib에서 사용 가능한 컬러 테이블을 보고 싶다면 matplotlib [사이트](https://matplotlib.org/stable/gallery/color/named_colors.html) 에서 볼 수 있다.
+
+- *startangle = 90* -> 90도부터 파이 차트를 그리기 시작하겠다.
+
+### 제주도의 남녀 인구 비율 표현하기
+
+#### 파이 차트
+
+파이 차트로 제주도의 남녀 인구 비율을 나타내면 한눈에 남녀중 누가 더 많이 있는지를 파악할 수 있다. 이때, 0세부터 100세 이상까지를 하나하나 도출하는 것이 아닌, 남성의 0세부터 100세이상의 합, 여성의 0세부터 100세이상의 합을 구해야 함에 주의해서 코드를 작성해야 한다.
+
+``` python
+import csv
+f = open('gender.csv', 'r', encoding = 'cp949')
+data = csv.reader(f)
+size = []
+name = input("찾고싶은 지역의 이름을 입력하세요: ")
+
+for row in data:
+    if name in row[0]:
+        m = 0
+        f = 0
+        for i in range(101):
+            m += int(row[i+3].replace(',','')) #3번째 열부터 101개 누적
+            f += int(row[i+106].replace(',','')) #106번째 열부터 101개 누적
+        break
+
+size.append(m)
+size.append(f)
+
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'AppleGothic'
+plt.pie(size, labels = ['남', '여'], autopct = '%.1f%%', colors = ['deepskyblue', 'crimson'], startangle = 90) # 소수점 1자리까지, 컬러 지정, 90도부터 시작
+plt.title('%s지역의 남녀 성별 비율'%name)
+plt.show()
+```
+
+
+
+![jeju_pie](Day05.assets/jeju_pie.png)
+
+#### 꺾은선 그래프
+
+파이차트는 전체 남녀 성비를 한눈에 보기 쉽지만, 연령별로의 차이는 알 수 없다는 문제가 있다. 연령별로 상세하게 보고싶다면 꺾은선 그래프로 성비를 보면 된다.
+
+``` python
+import csv
+f = open('gender.csv', 'r', encoding = 'cp949')
+data = csv.reader(f)
+m = []
+f = []
+name = input('궁금한 동네를 입력해주세요: ')
+for row in data :
+    if name in row[0]:
+        for i in range(3, 104):
+            m.append(int(row[i].replace(',', '')))
+            f.append(int(row[i+103].replace(',', '')))
+        break
+        
+import matplotlib.pyplot as plt
+plt.plot(m, label = 'Male')
+plt.plot(f, label = 'Female')
+plt.legend()
+plt.show()
+```
+
+![genderbyplot](Day05.assets/genderbyplot.png)
+
+#### 히스토그램
+
+꺾은선 그래프를 활용하면 남여 중 누가 더 많은지까지 알 수 있지만, 만약 남여 인구수의 차이를 알고싶다면? 차이를 계산하여 히스토그램으로 나타내주도록 하자. 남성 인구수 - 여성 인구수를 리스트화하여 히스토그램으로 나타내면 그래프 윗부분은(+) 남성이 여성보다 많음을, 그 반대의 경우(-)는 여성이 남성보다 많음을 한눈에 알 수 있을 것이다. 덤으로, 어느 연령대에서 크게 차이가 나는지도 볼 수 있으니 일석이조다!
+
+``` python
+import csv
+f = open('gender.csv', 'r', encoding = 'cp949')
+data = csv.reader(f)
+result = []
+name = input('궁금한 동네를 입력해주세요: ')
+for row in data :
+    if name in row[0]:
+        for i in range(3, 104):
+            result.append(int(row[i].replace(',', '')) - int(row[i+103].replace(',', ''))) #차이를 리스트화한다.
+        break
+        
+import matplotlib.pyplot as plt
+plt.bar(range(101), result)
+plt.show()
+```
+
+![difference](Day05.assets/difference.png)
+
+## 4. 산점도
+
+이번에는 데이터 간의 관계를 파악하는 데 도움이 되는 산점도를 그려보겠다. 산점도는 가로축과 세로축을 기준으로 두 요소가 서로 어떤 관계를 맺고 있는지를 파악하기 쉽게 나타낸 그래프이다.
+
+- *plt.scatter([값1], [값2])*
+
+``` python
+import matplotlib.pyplot as plt
+plt.scatter([1,2,3,4], [10,30,20,40])
+plt.show()
+```
+
+![scatter](Day05.assets/scatter.png)
+
+산점도에 나타나는 점은 사이즈 및 컬러 조정이 가능하다.
+
+- *plt.scatter([값1], [값2], s = [크기], c = [색상])*
+
+  색상은 *range(4)* 처럼 범위로 지정하여 출력할 수도 있다.
+
+- *plt.colorbar* : 우측에 컬러바 추가
+
+- *alpha* : 점의 투명도 조절
+
+``` python
+import matplotlib.pyplot as plt
+plt.scatter([1,2,3,4], [10,30,20,40], s = [100, 150, 200, 300], c = ['gold', 'blue', 'green', 'red'])
+#s = 사이즈 조절, c = 컬러 설정
+plt.colorbar()
+plt.show()
+```
+
+![colorbar](Day05.assets/colorbar.png)
+
+cmap 이라는 컬러맵 속성을 이용해 컬러바의 색상 종류를 사용할 수도 있다. 다양한 컬러맵을 지원하므로, 이 [사이트](https://matplotlib.org/stable/tutorials/colors/colormaps.html)에서 사용 가능한 컬러맵들을 확인해봐도 좋다.
+
+`plt.scatter([1,2,3,4], [10,30,20,40], s = [30, 60, 90, 120], c = range(4), cmap = 'jet')`
+![cmap](Day05.assets/cmap.png)
+
+랜덤으로 정수를 추출해서 차트를 만들어볼 수 있다. size 리스트를 사용해 크기에 따라 다른 색이 나오도록 설정하고, 겹치는 부분도 볼 수 있도록 alpha값을 0.7로 설정해주었다. alpha값은 0부터 1 사이값으로 설정해줄 수 있다.
+
+``` python
+import matplotlib.pyplot as plt
+import random #랜덤함수 호출
+x = []
+y = []
+size = []
+
+for i in range(100): #100개의 랜덤한 점 만들기
+    x.append(random.randint(50, 100)) #50에서 100까지 무작위 정수 추출
+    y.append(random.randint(50, 100))
+    size.append(random.randint(10, 100))
+plt.scatter(x, y, s = size, c = size, cmap = 'jet', alpha = 0.7) #알파값을 0.7로 설정해 투명도 조절
+plt.colorbar() #우측 컬러바 추가
+plt.show()
+```
+
+![alpha_scatter](Day05.assets/alpha_scatter.png)
