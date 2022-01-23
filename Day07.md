@@ -99,3 +99,90 @@ html에서 자주 사용되는 태그는 `head, body, title, br, a, p` 등 그 �
 ![스크린샷 2022-01-22 오후 10.15.08](Day07.assets/스크린샷 2022-01-22 오후 10.15.08.png)
 
 코드를 직접 입력해보고 해당 브라우저로 이동하면 위와 같은 결과를 볼 수 있다. 연습을 위한 무료 이미지 소스가 필요하다면 [픽사베이](https://pixabay.com/ko/)에서 무료 이미지를 다운받아 사용해보자.
+
+## CSS
+
+### css 기초
+
+CSS(Cascading Style Sheets)는 웹페이지를 꾸미기 위해 작성하는 코드이다. CSS를 통해 HTML 문서에 있는 요소들에 선택적으로 스타일을 적용할 수 있다. 
+
+HTML 문서에 입력된 정보나 공간에 CSS 디자인 효과를 적용하기 위해서는 다음의 세 가지 방법 중 하나를 적용할 수 있다.
+
+- 인터널 방식: HTML문서 안에 `<style>` 태그를 사용하여 적용하는 방식
+
+  ``` html
+  <html>
+  <head>
+    <style>
+    h1{
+        color:red;
+    }
+    </style>
+  </head>
+  <body>
+  
+  <h1>테스트 입니다.</h1>
+  
+  </body>
+  </html>
+  ```
+
+- 인라인 방식: HTML 태그 안에 style 속성을 사용하여 적용하는 방식
+
+  ``` html
+  <html>
+  <head>
+  </head>
+  <body>
+  
+  <h1 sytle="color : red;">테스트 입니다.</h1>
+  
+  </body>
+  </html>
+  ```
+
+- 익스터널 방식: CSS 파일을 생성하여 HTML 문서와 연동하는 방식. head태그 안에 link 태그를 이용하여 CSS 파일을 적용한다.
+
+  예) `<head><link rel = "stylesheet" type = "text/css" href = "test.css"></head>`
+
+  아래는 세 가지 방식 중 **익스터널 방식**을 사용하여 작성하였다.
+
+***HTML 문서***
+
+``` html
+<html>
+<head>
+    <title>웹 프로그래밍 기초</title>
+    <link rel = 'stylesheet' href = 'style.css'>
+</head>
+<body>
+    <h1>type 선택자</h1>
+    <h2 id ='bg'>id 선택자</h2>
+    <p class = 'size color'>class 선택자</p>
+</body>
+</html>
+```
+
+ ***style.css***
+``` css
+header{
+    color: red;
+} 
+
+h1{
+    color: blue;
+}
+
+p{
+    color:darkgoldenrod;
+}
+```
+
+**결과**
+
+![external_style](Day07.assets/external_style.png)
+
+### css에서의 상속
+
+css는 상속을 통해 부모 요소의 속성을 자식에게 상속할 수 있다. 상속 기능을 이용하면 반복적으로 진행해야 하는 번거로운 일들을 줄일 수 있다는 장점이 있다. 단, 속성 중에서는 상속이 되는 것과 되지않는 것이 있다는 것만 유의하자.
+
