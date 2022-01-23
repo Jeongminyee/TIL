@@ -13,4 +13,5 @@
 - Day 4. Python - Matplotlib을 이용한 데이터 시각화 : 기상공공데이터 활용
 - Day 5. Python - Matplotlib을 이용한 데이터 시각화 : 기상공공데이터&인구공공데이터 활용
 - Day 6. Python - Seaborn, Folium을 이용한 데이터 시각화
-- Day 7. Html - 크롤링을 위한 웹 프로그래밍 기초와 html 기본
+- Day 7. Html - 크롤링을 위한 웹 프로그래밍 기초와 html, css 기초
+- Day 8. Crawling - request, beautifulsoup을 이용한 영화 포스터 다운받기
