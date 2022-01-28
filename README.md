@@ -15,3 +15,4 @@
 - Day 6. Python - Seaborn, Folium을 이용한 데이터 시각화
 - Day 7. Html - 크롤링을 위한 웹 프로그래밍 기초와 html, css 기초
 - Day 8. Crawling - request, beautifulsoup을 이용한 영화 포스터 다운받기
+- Day 9. Crawling - request, beautifulsoup을 이용한 네이버 웹툰 목록 다루기, selenium으로 자동화 하기
