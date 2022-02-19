@@ -2,7 +2,6 @@
 
 * 데이터를 기반으로 업무를 진행하고자 기록하는 Today I Learned
 * 꾸준하게 학습하고, 탐구하는 좋은 프로그래머가 되자
-* 2일 1 포스팅 목표
 
 ![pythonlogo](https://www.msbiblog.com/wp-content/uploads/2016/09/Python_logo.png)
 
@@ -17,3 +16,4 @@
 - Day 8. Crawling - request, beautifulsoup을 이용한 영화 포스터 다운받기
 - Day 9. Crawling - request, beautifulsoup을 이용한 네이버 웹툰 목록 다루기, selenium으로 자동화 하기
 - Day 10. Database, SQL - 데이터베이스 이론과 DBMS, My-SQL을 이용한 데이터 조회와 필터링 1
+- Day 11. Tableau - 태블로란 무엇인가. 역할 및 장단점, 태블로 대시보드의 개념
